@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -25,9 +27,27 @@ func main() {
 	app.Use(logger.New())
 	app.Use(engine.Middleware())
 
-	app.Get("/:name", func(c *fiber.Ctx) error {
+	engine.Share("start", time.Now().String())
+	engine.AddParam("Title", "Example App")
+
+	app.Use(func(c *fiber.Ctx) error {
+		engine.AddProp("req", time.Now().String())
+		return c.Next()
+	})
+
+	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("Index", fiber.Map{
-			"name": c.Params("name", "world"),
+			"name": "world",
+		})
+	})
+
+	app.Get("/:name", func(c *fiber.Ctx) error {
+		name, err := url.PathUnescape(c.Params("name", "world"))
+		if err != nil {
+			return err
+		}
+		return c.Render("Index", fiber.Map{
+			"name": name,
 		})
 	})
 

@@ -75,11 +75,12 @@ Fiber Inertia only exports three things: The engine, the config, and the New fun
 
 ### `type Config struct`
 
-`Config` has three properties:
+`Config` has four properties:
 
 - `Root` - The root directory. Do not use this if you are using FS.
 - `FS` - the `http.FileSystem`. You can use `embed.FS` and then call `http.FS` on it.
 - `AssetsPath` - The path to the assets to version.
+- `Template` - The path to the root HTML template that will be rendered with the page string.
 
 ### `type Engine struct`
 
@@ -88,6 +89,12 @@ Engine extends `github.com/gofiber/template/html.Engine` to provide a typical HT
 ```hbs
 <div id="app" data-page="{{.Page}}"></div>
 ```
+
+Extra functions:
+
+- `Share`: Shares a prop for every request.
+- `AddProp`: Add a prop from middleware for the next request.
+- `AddParam`: Share a param with the root template.
 
 ## License
 
